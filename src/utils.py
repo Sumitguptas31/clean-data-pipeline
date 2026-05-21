@@ -1,15 +1,57 @@
 import pandas as pd
 
-def load_data(path):
-    return pd.read_csv(path)
 
-def clean_data(df):
-    return df.drop_duplicates()
+def trim_whitespace(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Trim leading and trailing spaces
+    from string columns.
 
-def data_summary(df):
-    print("\nDataset Summary")
-    print(f"Rows: {df.shape[0]}")
-    print(f"Columns: {df.shape[1]}")
-    print("\nMissing Values:")
-    print(df.isnull().sum())
+    Args:
+        df: Input dataframe
 
+    Returns:
+        Cleaned dataframe
+    """
+
+    object_columns = df.select_dtypes(
+        include=["object"]
+    ).columns
+
+    for col in object_columns:
+        df[col] = df[col].str.strip()
+
+    return df
+
+
+def remove_duplicates(
+    df: pd.DataFrame,
+    subset: list[str] | None = None
+) -> pd.DataFrame:
+    """
+    Remove duplicate rows.
+
+    Args:
+        df: Input dataframe
+        subset: Columns used for duplicate detection
+
+    Returns:
+        Dataframe without duplicates
+    """
+
+    return df.drop_duplicates(subset=subset)
+
+
+def drop_null_rows(
+    df: pd.DataFrame
+) -> pd.DataFrame:
+    """
+    Remove rows containing null values.
+
+    Args:
+        df: Input dataframe
+
+    Returns:
+        Cleaned dataframe
+    """
+
+    return df.dropna()
